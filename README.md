@@ -25,3 +25,4 @@ This project is using the following tools:
 - [Vite](https://vitejs.dev/) as the compiler
 - [Tailwind CSS](https://tailwindcss.com/) for styling
 - [ThreeJS](https://threejs.org/) for 3D stuff
+- [Prettier](https://prettier.io/) to format the files
