@@ -1,9 +1,10 @@
 import "./App.css";
+import Terminal from "./components/Terminal";
 
 function App() {
   return (
     <>
-      <h1 className="logo">Hello world!</h1>
+      <Terminal />
     </>
   );
 }
