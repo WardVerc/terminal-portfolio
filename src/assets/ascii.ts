@@ -23,5 +23,5 @@ export const asciiSurfer = String.raw`
               '-._         '\
                   '-._       '.
                       '-._     \
-                          '~---'
+        © 2024            '~---'
 `;
