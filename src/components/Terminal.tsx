@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { asciiSurfer, asciiTitle } from "../assets/ascii.js";
-import "./Terminal.css";
 
 interface Command {
   name: string;
@@ -43,11 +42,17 @@ const Terminal: React.FC = () => {
   };
 
   return (
-    <div className="terminalContainer">
-      <p>© WardVerc's not a corporation. All rights resurfed.</p>
-      <div className="asciiContainer">
-        <pre>{asciiTitle}</pre>
-        <pre>{asciiSurfer}</pre>
+    <div className="font-mono">
+      <p className="text-sm">
+        © WardVerc's not a corporation. All rights resurfed.
+      </p>
+      <div className="flex">
+        <span className="text-xs">
+          <pre>{asciiTitle}</pre>
+        </span>
+        <span className="text-xs">
+          <pre>{asciiSurfer}</pre>
+        </span>
       </div>
       <p>Type 'help' for a list of available commands.</p>
       <div>
