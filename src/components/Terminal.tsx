@@ -78,6 +78,7 @@ const Terminal: React.FC = () => {
           {preCommand}
           <input
             type="text"
+            className="outline-none bg-[var(--main-bg-color)]"
             onBlur={(e) => e.target.focus()}
             autoFocus
             value={inputValue}
