@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { asciiSurfer, asciiTitle } from "../assets/ascii.js";
 import CommandRenderer from "./CommandRenderer.tsx";
 
@@ -22,6 +22,12 @@ const Terminal: React.FC = () => {
     setCommands([...commands, inputValue]);
     setInputValue("");
   };
+
+  useEffect(() => {
+    const terminalInputElement = document.getElementById("terminalInput");
+    terminalInputElement &&
+      terminalInputElement.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [commands]);
 
   return (
     <div className="font-mono">
@@ -48,6 +54,7 @@ const Terminal: React.FC = () => {
         <p className="flex">
           {preCommand}
           <input
+            id="terminalInput"
             type="text"
             className="outline-none bg-[var(--main-bg-color)]"
             onBlur={(e) => e.target.focus()}
