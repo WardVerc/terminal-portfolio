@@ -46,7 +46,7 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
     <div className="m-8">
       {commandList.map((command: Command) => (
         <div className="flex">
-          <span className="w-52 text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
+          <span className="w-36 text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
             {command.name}
           </span>
           <span>{command.description}</span>

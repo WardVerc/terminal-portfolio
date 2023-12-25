@@ -9,8 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  --main-bg-color: #242424;
-  background-color: var(--main-bg-color);
+  --main-bg-color: rgba(49, 46, 48, 0.75);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,11 +23,4 @@
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
 }

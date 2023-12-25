@@ -4,6 +4,7 @@ import Terminal from "./components/Terminal";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import Banner from "./components/Banner";
 
 function App() {
   const refContainer = useRef<HTMLDivElement>(null);
@@ -94,6 +95,7 @@ function App() {
 
   return (
     <div ref={refContainer}>
+      <Banner />
       <Terminal />
     </div>
   );

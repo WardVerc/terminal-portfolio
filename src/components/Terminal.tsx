@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { asciiSurfer, asciiTitle } from "../assets/ascii.js";
 import CommandRenderer from "./CommandRenderer.tsx";
 
 const preCommand = (
@@ -30,18 +29,7 @@ const Terminal: React.FC = () => {
   }, [commands]);
 
   return (
-    <div className="font-mono absolute">
-      <p className="text-sm text-cyan-100 drop-shadow-[0_0_2px_rgb(34,211,238)]">
-        © WardVerc's not a corporation. All rights resurfed.
-      </p>
-      <div className="flex">
-        <span className="text-xs text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
-          <pre>{asciiTitle}</pre>
-        </span>
-        <span className="text-xs text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
-          <pre>{asciiSurfer}</pre>
-        </span>
-      </div>
+    <div className="absolute mt-36 ml-4 p-2 font-mono min-w-[550px] w-1/3 h-5/6 bg-[var(--main-bg-color)] overflow-hidden rounded-md">
       <p className="mb-8">Type 'help' for a list of available commands.</p>
       <div>
         <CommandRenderer
@@ -56,7 +44,7 @@ const Terminal: React.FC = () => {
           <input
             id="terminalInput"
             type="text"
-            className="outline-none bg-[var(--main-bg-color)]"
+            className="outline-none bg-transparent"
             onBlur={(e) => e.target.focus()}
             autoFocus
             value={inputValue}
