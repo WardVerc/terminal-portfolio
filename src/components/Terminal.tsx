@@ -1,39 +1,21 @@
 import { useState } from "react";
 import { asciiSurfer, asciiTitle } from "../assets/ascii.js";
+import CommandRenderer from "./CommandRenderer.tsx";
 
-interface Command {
-  name: string;
-  description: string;
-}
-
-const commandList: Command[] = [
-  { name: "help", description: "Show a list of available commands" },
-  { name: "clear", description: "Clear the terminal and your mind" },
-];
-
-const preCommand = "visitor@terminal-portfolio:~$ ";
+const preCommand = (
+  <p className="text-cyan-400 mr-2">
+    terminal-portfolio
+    <span className="text-sky-600">
+      {" "}
+      git:(<span className="text-red-600">main</span>)
+    </span>
+    ~$
+  </p>
+);
 
 const Terminal: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [commands, setCommands] = useState<string[]>([]);
-
-  const renderDefault = (command: string) => (
-    <p>
-      {preCommand}
-      {command}
-    </p>
-  );
-
-  const renderHelp = () => (
-    <div>
-      {commandList.map((command: Command) => (
-        <>
-          <span>{command.name}</span>
-          <span>{command.description}</span>
-        </>
-      ))}
-    </div>
-  );
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,38 +25,27 @@ const Terminal: React.FC = () => {
 
   return (
     <div className="font-mono">
-      <p className="text-sm">
+      <p className="text-sm text-cyan-100 drop-shadow-[0_0_2px_rgb(34,211,238)]">
         © WardVerc's not a corporation. All rights resurfed.
       </p>
       <div className="flex">
-        <span className="text-xs">
+        <span className="text-xs text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
           <pre>{asciiTitle}</pre>
         </span>
-        <span className="text-xs">
+        <span className="text-xs text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
           <pre>{asciiSurfer}</pre>
         </span>
       </div>
-      <p>Type 'help' for a list of available commands.</p>
+      <p className="mb-8">Type 'help' for a list of available commands.</p>
       <div>
-        {commands.map((command: string) => {
-          switch (command.toLowerCase()) {
-            case "clear":
-              setCommands([]);
-              break;
-            case "help":
-              return (
-                <>
-                  {renderDefault(command)}
-                  {renderHelp()}
-                </>
-              );
-            default:
-              return renderDefault(command);
-          }
-        })}
+        <CommandRenderer
+          commands={commands}
+          clear={() => setCommands([])}
+          preCommand={preCommand}
+        />
       </div>
       <form onSubmit={onSubmit}>
-        <p>
+        <p className="flex">
           {preCommand}
           <input
             type="text"
