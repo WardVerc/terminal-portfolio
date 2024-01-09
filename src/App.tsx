@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import "./App.css";
 import Terminal from "./components/Terminal";
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import Banner from "./components/Banner";
 
@@ -27,39 +26,103 @@ function App() {
     // Renderer
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    // use ref as a mount point of the Three.js scene instead of the document.body
+    // use ref instead of the document.body
     refContainer.current &&
       refContainer.current.appendChild(renderer.domElement);
 
-    // Blue cube
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Background
+    const spaceTexture = new THREE.TextureLoader().load("space.png");
+    scene.background = spaceTexture;
+    scene.backgroundBlurriness = 1;
+    scene.backgroundIntensity = 0.3;
 
     // Light source
-    const light = new THREE.PointLight(0xffffff, 2000);
-    light.position.set(10, 10, 0);
-    const lightHelper = new THREE.PointLightHelper(light);
+    // const pointLight = new THREE.PointLight(0xffffff, 1000);
+    // pointLight.position.set(10, 10, 0);
+    // const lightHelper = new THREE.PointLightHelper(pointLight);
+    // scene.add(lightHelper)
+    const light = new THREE.AmbientLight(0xffffff, 20);
     const gridHelper = new THREE.GridHelper(50, 10);
-    scene.add(light, lightHelper, gridHelper);
+    scene.add(light, gridHelper);
 
     // Orbitcontrols
     const controls = new OrbitControls(camera, renderer.domElement);
 
-    // // Load 3D model
-    // const loader = new GLTFLoader();
+    // Blue cube
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+    const blueCube = new THREE.Mesh(geometry, material);
+    scene.add(blueCube);
 
-    // loader.load(
-    //   "/laptop.fbx",
-    //   function (gltf) {
-    //     scene.add(gltf.scene);
-    //   },
-    //   undefined,
-    //   function (error) {
-    //     console.error(error);
-    //   },
+    // Project card
+    const map = new THREE.TextureLoader().load("notsure.png");
+    const imageMaterial = new THREE.MeshBasicMaterial({ map: map });
+    const imageGeometry = new THREE.BoxGeometry(0.3, 3, 5);
+    // Card 1
+    const imageCard = new THREE.Mesh(imageGeometry, [
+      imageMaterial,
+      imageMaterial,
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+    ]);
+    imageCard.position.set(0, 5, -5);
+    scene.add(imageCard);
+    // Card 2
+    const map2 = new THREE.TextureLoader().load("space.png");
+    const imageMaterial2 = new THREE.MeshBasicMaterial({ map: map2 });
+    const imageCard2 = new THREE.Mesh(imageGeometry, [
+      imageMaterial2,
+      imageMaterial2,
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+      new THREE.MeshLambertMaterial({ color: 0xffffff }),
+    ]);
+    imageCard2.position.set(-5, 5, -5);
+    scene.add(imageCard2);
+
+    // stars
+    function addStar() {
+      const starGeometry = new THREE.SphereGeometry(0.25, 24, 24);
+      const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+      const star = new THREE.Mesh(starGeometry, starMaterial);
+
+      // Get an array of 3 random values (float from -range/2 to range/2)
+      const [x, y, z] = Array(3)
+        .fill(0)
+        .map(() => THREE.MathUtils.randFloatSpread(100));
+
+      star.position.set(x, y, z);
+      scene.add(star);
+    }
+    // fill an array with 200 values and execute addStar for each
+    Array(200).fill(0).forEach(addStar);
+
+    // PointsPath: a circle
+    // const pointsPath = new THREE.CurvePath();
+    // const circle = new THREE.EllipseCurve(
+    //   0, // ax, position circlecentre
+    //   0, // aY, position circlecentre
+    //   10, // xRadius
+    //   10, // yRadius
+    //   0, // aStartAngle,
+    //   2 * Math.PI, // aEndAngle
+    //   false, // aClockwise
+    //   0, // aRotation
     // );
+
+    // pointsPath.add(circle);
+
+    // Path
+    // const pathMaterial = new THREE.LineBasicMaterial({
+    //   color: 0x9132a8,
+    // });
+    // const points = pointsPath.curves[0].getPoints(20);
+    // const pathGeometry = new THREE.BufferGeometry().setFromPoints(points);
+    // const path = new THREE.Line(pathGeometry, pathMaterial);
+    // scene.add(path);
 
     // Handle window resize
     const handleResize = () => {
@@ -75,11 +138,15 @@ function App() {
       requestAnimationFrame(animate);
 
       // Blue cube spinning
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      blueCube.rotation.x += 0.01;
+      blueCube.rotation.y += 0.01;
 
+      // Project cards spinning
+      imageCard.rotation.y += 0.01;
+      imageCard2.rotation.y += 0.01;
+
+      // Update and render
       controls.update();
-
       renderer.render(scene, camera);
     };
 
