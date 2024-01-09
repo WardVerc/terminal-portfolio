@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Terminal from "./components/Terminal";
 import * as THREE from "three";
@@ -7,6 +7,7 @@ import Banner from "./components/Banner";
 
 function App() {
   const refContainer = useRef<HTMLDivElement>(null);
+  const [closeUpProject, setCloseUpProject] = useState("");
 
   useEffect(() => {
     // Scene
@@ -59,7 +60,7 @@ function App() {
     const imageMaterial = new THREE.MeshBasicMaterial({ map: map });
     const imageGeometry = new THREE.BoxGeometry(0.3, 3, 5);
     // Card 1
-    const imageCard = new THREE.Mesh(imageGeometry, [
+    const project1 = new THREE.Mesh(imageGeometry, [
       imageMaterial,
       imageMaterial,
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
@@ -67,12 +68,12 @@ function App() {
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
     ]);
-    imageCard.position.set(0, 5, -5);
-    scene.add(imageCard);
+    project1.position.set(-5, 5, 5);
+    scene.add(project1);
     // Card 2
     const map2 = new THREE.TextureLoader().load("space.png");
     const imageMaterial2 = new THREE.MeshBasicMaterial({ map: map2 });
-    const imageCard2 = new THREE.Mesh(imageGeometry, [
+    const project2 = new THREE.Mesh(imageGeometry, [
       imageMaterial2,
       imageMaterial2,
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
@@ -80,10 +81,10 @@ function App() {
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
     ]);
-    imageCard2.position.set(-5, 5, -5);
-    scene.add(imageCard2);
+    project2.position.set(0, 5, 5);
+    scene.add(project2);
 
-    // stars
+    // Stars
     function addStar() {
       const starGeometry = new THREE.SphereGeometry(0.25, 24, 24);
       const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
@@ -97,7 +98,7 @@ function App() {
       star.position.set(x, y, z);
       scene.add(star);
     }
-    // fill an array with 200 values and execute addStar for each
+    // Fill an array with 200 values and execute addStar for each
     Array(200).fill(0).forEach(addStar);
 
     // PointsPath: a circle
@@ -141,9 +142,15 @@ function App() {
       blueCube.rotation.x += 0.01;
       blueCube.rotation.y += 0.01;
 
-      // Project cards spinning
-      imageCard.rotation.y += 0.01;
-      imageCard2.rotation.y += 0.01;
+      // Project cards rotation
+      const time = Date.now() * 0.001;
+      project1.rotation.y = time;
+      project1.rotation.z = 0.5 * (1 + Math.sin(time));
+
+      project2.rotation.y = time;
+      project2.rotation.z = 0.5 * (1 + Math.cos(time));
+
+      // Listen which card is in close up
 
       // Update and render
       controls.update();
@@ -160,10 +167,14 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    console.log(closeUpProject);
+  }, [closeUpProject]);
+
   return (
     <div ref={refContainer}>
       <Banner />
-      <Terminal />
+      <Terminal setCloseUpProject={setCloseUpProject} />
     </div>
   );
 }

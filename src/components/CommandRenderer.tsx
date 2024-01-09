@@ -18,6 +18,7 @@ const commandList: Command[] = [
   { name: "title", description: "Show the ascii art title" },
   { name: "surfer", description: "Show the ascii art surfer" },
   { name: "projects", description: "View projects (under construction)" },
+  { name: "project1", description: "View the first project in detail" },
 ];
 
 const CommandRenderer: React.FC<CommandRendererProps> = ({
@@ -74,6 +75,12 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
     </>
   );
 
+  const showProject = (projectName: string) => (
+    <>
+      <p>Showing {projectName}...</p>
+    </>
+  );
+
   return (
     <>
       {commands.map((command: string) => {
@@ -107,6 +114,13 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
               <>
                 {renderDefault(command)}
                 {showProjects()}
+              </>
+            );
+          case "project1":
+            return (
+              <>
+                {renderDefault(command)}
+                {showProject("project1")}
               </>
             );
           default:

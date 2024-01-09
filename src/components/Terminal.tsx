@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import CommandRenderer from "./CommandRenderer.tsx";
 
+interface TerminalProps {
+  setCloseUpProject: (project: string) => void;
+}
+
 const preCommand = (
   <p className="text-cyan-400 mr-2">
     terminal-portfolio
@@ -12,13 +16,20 @@ const preCommand = (
   </p>
 );
 
-const Terminal: React.FC = () => {
+const Terminal: React.FC<TerminalProps> = ({
+  setCloseUpProject,
+}: TerminalProps) => {
   const [inputValue, setInputValue] = useState("");
   const [commands, setCommands] = useState<string[]>([]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCommands([...commands, inputValue]);
+    switch (inputValue) {
+      case "project1":
+        setCloseUpProject("project1");
+        break;
+    }
     setInputValue("");
   };
 
@@ -38,7 +49,7 @@ const Terminal: React.FC = () => {
           preCommand={preCommand}
         />
       </div>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} autoComplete="off">
         <p className="flex">
           {preCommand}
           <input
