@@ -7,6 +7,7 @@ import Banner from "./components/Banner";
 
 function App() {
   const refContainer = useRef<HTMLDivElement>(null);
+  const closeUpProjectRef = useRef<string | null>(null);
   const [closeUpProject, setCloseUpProject] = useState("");
 
   useEffect(() => {
@@ -70,6 +71,7 @@ function App() {
     ]);
     project1.position.set(-5, 5, 5);
     scene.add(project1);
+
     // Card 2
     const map2 = new THREE.TextureLoader().load("space.png");
     const imageMaterial2 = new THREE.MeshBasicMaterial({ map: map2 });
@@ -83,6 +85,37 @@ function App() {
     ]);
     project2.position.set(0, 5, 5);
     scene.add(project2);
+
+    // Move the Mesh object towards the camera with a certain speed
+    function moveMeshTowardsCamera(
+      mesh: THREE.Mesh,
+      camera: THREE.Camera,
+      speed: number,
+      distance: number,
+    ): void {
+      // Clone the camera's position
+      const cameraPosition = camera.position.clone();
+
+      // Calculate the look-at direction of the camera (pointing towards the center of the scene)
+      const lookAtDirection = new THREE.Vector3(0, 0, 0)
+        // The .sub() method subtracts the camera's position from the center, resulting in the look-at direction.
+        .sub(cameraPosition)
+        // The .normalize() method scales the resulting vector to a unit length, ensuring consistent speed.
+        .normalize();
+
+      // Calculate the final position by moving in the look-at direction with the specified distance
+      const newPosition = cameraPosition
+        .clone()
+        // The .multiplyScalar() method scales the look-at direction vector by the specified distance,
+        // determining the position the mesh should move towards.
+        .add(lookAtDirection.multiplyScalar(distance));
+
+      // Use linear interpolation (lerp) for smooth movement
+      mesh.position.lerp(newPosition, speed); // Adjust the second parameter for desired smoothness
+      // The .lerp() method interpolates between the current position of the mesh and the calculated newPosition.
+      // The second parameter (speed) determines the amount of interpolation,
+      // where higher values result in smoother but slower movement.
+    }
 
     // Stars
     function addStar() {
@@ -100,30 +133,6 @@ function App() {
     }
     // Fill an array with 200 values and execute addStar for each
     Array(200).fill(0).forEach(addStar);
-
-    // PointsPath: a circle
-    // const pointsPath = new THREE.CurvePath();
-    // const circle = new THREE.EllipseCurve(
-    //   0, // ax, position circlecentre
-    //   0, // aY, position circlecentre
-    //   10, // xRadius
-    //   10, // yRadius
-    //   0, // aStartAngle,
-    //   2 * Math.PI, // aEndAngle
-    //   false, // aClockwise
-    //   0, // aRotation
-    // );
-
-    // pointsPath.add(circle);
-
-    // Path
-    // const pathMaterial = new THREE.LineBasicMaterial({
-    //   color: 0x9132a8,
-    // });
-    // const points = pointsPath.curves[0].getPoints(20);
-    // const pathGeometry = new THREE.BufferGeometry().setFromPoints(points);
-    // const path = new THREE.Line(pathGeometry, pathMaterial);
-    // scene.add(path);
 
     // Handle window resize
     const handleResize = () => {
@@ -151,6 +160,9 @@ function App() {
       project2.rotation.z = 0.5 * (1 + Math.cos(time));
 
       // Listen which card is in close up
+      if (closeUpProjectRef.current === "project1") {
+        moveMeshTowardsCamera(project1, camera, 0.1, 5);
+      }
 
       // Update and render
       controls.update();
@@ -169,6 +181,7 @@ function App() {
 
   useEffect(() => {
     console.log(closeUpProject);
+    closeUpProjectRef.current = closeUpProject;
   }, [closeUpProject]);
 
   return (

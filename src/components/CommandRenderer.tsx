@@ -17,8 +17,10 @@ const commandList: Command[] = [
   { name: "clear", description: "Clear the terminal and your mind" },
   { name: "title", description: "Show the ascii art title" },
   { name: "surfer", description: "Show the ascii art surfer" },
-  { name: "projects", description: "View projects (under construction)" },
-  { name: "project1", description: "View the first project in detail" },
+  { name: "projects", description: "View all projects" },
+  { name: "overview", description: "View all projects" },
+  { name: "project1", description: "View project1 in detail" },
+  { name: "project2", description: "View project2 in detail" },
 ];
 
 const CommandRenderer: React.FC<CommandRendererProps> = ({
@@ -68,13 +70,6 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
     </span>
   );
 
-  const showProjects = () => (
-    <>
-      <p>Under construction ... but here is a surfer: </p>
-      {showSurfer()}
-    </>
-  );
-
   const showProject = (projectName: string) => (
     <>
       <p>Showing {projectName}...</p>
@@ -113,7 +108,14 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
             return (
               <>
                 {renderDefault(command)}
-                {showProjects()}
+                {showProject("projects")}
+              </>
+            );
+          case "overview":
+            return (
+              <>
+                {renderDefault(command)}
+                {showProject("overview")}
               </>
             );
           case "project1":
@@ -121,6 +123,13 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
               <>
                 {renderDefault(command)}
                 {showProject("project1")}
+              </>
+            );
+          case "project2":
+            return (
+              <>
+                {renderDefault(command)}
+                {showProject("project2")}
               </>
             );
           default:

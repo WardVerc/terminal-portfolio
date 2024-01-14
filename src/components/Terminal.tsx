@@ -26,8 +26,20 @@ const Terminal: React.FC<TerminalProps> = ({
     e.preventDefault();
     setCommands([...commands, inputValue]);
     switch (inputValue) {
+      case "overview":
+        setCloseUpProject("");
+        break;
+      case "projects":
+        setCloseUpProject("");
+        break;
       case "project1":
         setCloseUpProject("project1");
+        break;
+      case "project2":
+        setCloseUpProject("project2");
+        break;
+      case "clear":
+        setCloseUpProject("");
         break;
     }
     setInputValue("");
@@ -44,9 +56,9 @@ const Terminal: React.FC<TerminalProps> = ({
       <p className="mb-8">Type 'help' for a list of available commands.</p>
       <div>
         <CommandRenderer
+          preCommand={preCommand}
           commands={commands}
           clear={() => setCommands([])}
-          preCommand={preCommand}
         />
       </div>
       <form onSubmit={onSubmit} autoComplete="off">
