@@ -1,6 +1,6 @@
 # Terminal-portfolio website
 
-A portfolio website that looks like a terminal.
+A 3D portfolio website that looks like a terminal.
 
 ## Getting Started
 
