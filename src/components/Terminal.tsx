@@ -29,9 +29,6 @@ const Terminal: React.FC<TerminalProps> = ({
       case "overview":
         setCloseUpProject("overview");
         break;
-      case "projects":
-        setCloseUpProject("overview");
-        break;
       case "clear":
         setCloseUpProject("overview");
         break;

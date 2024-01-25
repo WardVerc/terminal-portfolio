@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { asciiSurfer, asciiTitle } from "../assets/ascii";
+import { asciiSurfer } from "../assets/ascii";
 
 interface Command {
   name: string;
@@ -13,14 +13,12 @@ interface CommandRendererProps {
 }
 
 const commandList: Command[] = [
-  { name: "help", description: "Show a list of available commands" },
-  { name: "clear", description: "Clear the terminal and your mind" },
-  { name: "title", description: "Show the ascii art title" },
-  { name: "surfer", description: "Show the ascii art surfer" },
-  { name: "projects", description: "View all projects" },
-  { name: "overview", description: "View all projects" },
   { name: "project1", description: "View project1 in detail" },
   { name: "project2", description: "View project2 in detail" },
+  { name: "overview", description: "View all projects" },
+  { name: "help", description: "Show a list of available commands" },
+  { name: "clear", description: "Clear the terminal and your mind" },
+  { name: "surfer", description: "Show the ascii art surfer" },
 ];
 
 const CommandRenderer: React.FC<CommandRendererProps> = ({
@@ -58,12 +56,6 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
     </div>
   );
 
-  const showTitle = () => (
-    <span className="text-xs text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
-      <pre>{asciiTitle}</pre>
-    </span>
-  );
-
   const showSurfer = () => (
     <span className="text-xs text-cyan-400 drop-shadow-[0_0_5px_rgb(34,211,238)]">
       <pre>{asciiSurfer}</pre>
@@ -90,25 +82,11 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
                 {renderHelp()}
               </>
             );
-          case "title":
-            return (
-              <>
-                {renderDefault(command)}
-                {showTitle()}
-              </>
-            );
           case "surfer":
             return (
               <>
                 {renderDefault(command)}
                 {showSurfer()}
-              </>
-            );
-          case "projects":
-            return (
-              <>
-                {renderDefault(command)}
-                {showProject("projects")}
               </>
             );
           case "overview":
