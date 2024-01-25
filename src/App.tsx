@@ -5,6 +5,10 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import Banner from "./components/Banner";
 
+const CAMERA_START_POSITION = new THREE.Vector3(0, 20, 30);
+const PROJECT1_START_POSITION = new THREE.Vector3(-5, 5, 0);
+const PROJECT2_START_POSITION = new THREE.Vector3(5, 5, 0);
+
 function App() {
   const refContainer = useRef<HTMLDivElement>(null);
   const closeUpProjectRef = useRef<string | null>(null);
@@ -21,9 +25,8 @@ function App() {
       0.1,
       1000,
     );
-    camera.position.x = 0;
-    camera.position.y = 5;
-    camera.position.z = 20;
+    // Set the camera's startposition
+    camera.position.copy(CAMERA_START_POSITION);
 
     // Renderer
     const renderer = new THREE.WebGLRenderer();
@@ -50,17 +53,12 @@ function App() {
     // Orbitcontrols
     const controls = new OrbitControls(camera, renderer.domElement);
 
-    // Blue cube
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
-    const blueCube = new THREE.Mesh(geometry, material);
-    scene.add(blueCube);
+    // Project card object
+    const imageGeometry = new THREE.BoxGeometry(0.3, 3, 5);
 
-    // Project card
+    // Card 1
     const map = new THREE.TextureLoader().load("notsure.png");
     const imageMaterial = new THREE.MeshBasicMaterial({ map: map });
-    const imageGeometry = new THREE.BoxGeometry(0.3, 3, 5);
-    // Card 1
     const project1 = new THREE.Mesh(imageGeometry, [
       imageMaterial,
       imageMaterial,
@@ -69,7 +67,7 @@ function App() {
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
     ]);
-    project1.position.set(-5, 5, 5);
+    project1.position.copy(PROJECT1_START_POSITION);
     scene.add(project1);
 
     // Card 2
@@ -83,8 +81,25 @@ function App() {
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
       new THREE.MeshLambertMaterial({ color: 0xffffff }),
     ]);
-    project2.position.set(0, 5, 5);
+    project2.position.copy(PROJECT2_START_POSITION);
     scene.add(project2);
+
+    // Stars
+    function addStar() {
+      const starGeometry = new THREE.SphereGeometry(0.25, 24, 24);
+      const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+      const star = new THREE.Mesh(starGeometry, starMaterial);
+
+      // Get an array of 3 random values (float from -range/2 to range/2)
+      const [x, y, z] = Array(3)
+        .fill(0)
+        .map(() => THREE.MathUtils.randFloatSpread(100));
+
+      star.position.set(x, y, z);
+      scene.add(star);
+    }
+    // Fill an array with 200 values and execute addStar for each
+    Array(200).fill(0).forEach(addStar);
 
     // Move the Mesh object towards the camera with a certain speed
     function moveMeshTowardsCamera(
@@ -117,22 +132,17 @@ function App() {
       // where higher values result in smoother but slower movement.
     }
 
-    // Stars
-    function addStar() {
-      const starGeometry = new THREE.SphereGeometry(0.25, 24, 24);
-      const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-      const star = new THREE.Mesh(starGeometry, starMaterial);
+    // Reset camera and object positions
+    const resetCameraAndProjects = () => {
+      // Use lerp to smoothly interpolate between current and initial positions
+      camera.position.lerp(CAMERA_START_POSITION, 0.05);
+      project1.position.lerp(PROJECT1_START_POSITION, 0.05);
+      project2.position.lerp(PROJECT2_START_POSITION, 0.05);
 
-      // Get an array of 3 random values (float from -range/2 to range/2)
-      const [x, y, z] = Array(3)
-        .fill(0)
-        .map(() => THREE.MathUtils.randFloatSpread(100));
-
-      star.position.set(x, y, z);
-      scene.add(star);
-    }
-    // Fill an array with 200 values and execute addStar for each
-    Array(200).fill(0).forEach(addStar);
+      setTimeout(() => {
+        setCloseUpProject("");
+      }, 500);
+    };
 
     // Handle window resize
     const handleResize = () => {
@@ -147,10 +157,6 @@ function App() {
     const animate = () => {
       requestAnimationFrame(animate);
 
-      // Blue cube spinning
-      blueCube.rotation.x += 0.01;
-      blueCube.rotation.y += 0.01;
-
       // Project cards rotation
       const time = Date.now() * 0.001;
       project1.rotation.y = time;
@@ -160,8 +166,18 @@ function App() {
       project2.rotation.z = 0.5 * (1 + Math.cos(time));
 
       // Listen which card is in close up
-      if (closeUpProjectRef.current === "project1") {
-        moveMeshTowardsCamera(project1, camera, 0.1, 5);
+      switch (closeUpProjectRef.current) {
+        case "project1":
+          moveMeshTowardsCamera(project1, camera, 0.1, 5);
+          project2.position.lerp(PROJECT2_START_POSITION, 0.05);
+          break;
+        case "project2":
+          moveMeshTowardsCamera(project2, camera, 0.1, 5);
+          project1.position.lerp(PROJECT1_START_POSITION, 0.05);
+          break;
+        case "overview":
+          resetCameraAndProjects();
+          break;
       }
 
       // Update and render
@@ -180,7 +196,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log(closeUpProject);
     closeUpProjectRef.current = closeUpProject;
   }, [closeUpProject]);
 

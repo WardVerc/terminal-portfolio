@@ -27,19 +27,19 @@ const Terminal: React.FC<TerminalProps> = ({
     setCommands([...commands, inputValue]);
     switch (inputValue) {
       case "overview":
-        setCloseUpProject("");
+        setCloseUpProject("overview");
         break;
       case "projects":
-        setCloseUpProject("");
+        setCloseUpProject("overview");
+        break;
+      case "clear":
+        setCloseUpProject("overview");
         break;
       case "project1":
         setCloseUpProject("project1");
         break;
       case "project2":
         setCloseUpProject("project2");
-        break;
-      case "clear":
-        setCloseUpProject("");
         break;
     }
     setInputValue("");
@@ -53,6 +53,7 @@ const Terminal: React.FC<TerminalProps> = ({
 
   return (
     <div className="absolute mt-36 ml-4 p-2 font-mono min-w-[550px] w-1/3 h-5/6 bg-[var(--main-bg-color)] overflow-hidden rounded-md">
+      <p>Use the mouse to look around and zoom.</p>
       <p className="mb-8">Type 'help' for a list of available commands.</p>
       <div>
         <CommandRenderer
