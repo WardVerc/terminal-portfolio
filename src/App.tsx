@@ -35,6 +35,7 @@ const projects: ProjectInterface[] = [
 
 function App() {
   const refContainer = useRef<HTMLDivElement>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const closeUpProjectRef = useRef<string | null>(null);
   const [closeUpProject, setCloseUpProject] = useState("");
 
@@ -51,6 +52,7 @@ function App() {
     );
     // Set the camera's startposition
     camera.position.copy(CAMERA_START_POSITION);
+    cameraRef.current = camera;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer();
@@ -133,7 +135,6 @@ function App() {
 
       // Calculate the final position by moving in the look-at direction with the specified distance
       const newPosition = cameraPosition
-        .clone()
         // The .multiplyScalar() method scales the look-at direction vector by the specified distance,
         // determining the position the mesh should move towards.
         .add(lookAtDirection.multiplyScalar(distance));
@@ -161,9 +162,11 @@ function App() {
 
     // Handle window resize
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (cameraRef.current) {
+        cameraRef.current.aspect = window.innerWidth / window.innerHeight;
+        cameraRef.current.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
     };
 
     window.addEventListener("resize", handleResize);
@@ -183,24 +186,33 @@ function App() {
         }
       });
 
-      // Listen which card is in close up
-      projects.forEach((project) => {
-        if (closeUpProjectRef.current == "overview") {
-          resetCameraAndProjects();
-        } else if (
-          closeUpProjectRef.current == project.id &&
-          project.meshObject
-        ) {
-          moveMeshTowardsCamera(project.meshObject, camera, 0.1, 5);
-        } else {
-          project.meshObject &&
-            project.meshObject.position.lerp(project.startPosition, 0.05);
-        }
-      });
+      if (cameraRef.current) {
+        // Listen which card is in close up
+        projects.forEach((project) => {
+          if (closeUpProjectRef.current == "overview") {
+            resetCameraAndProjects();
+          } else if (
+            closeUpProjectRef.current == project.id &&
+            project.meshObject
+          ) {
+            if (cameraRef.current) {
+              moveMeshTowardsCamera(
+                project.meshObject,
+                cameraRef.current,
+                0.1,
+                5,
+              );
+            }
+          } else {
+            project.meshObject &&
+              project.meshObject.position.lerp(project.startPosition, 0.05);
+          }
+        });
 
-      // Update and render
-      controls.update();
-      renderer.render(scene, camera);
+        // Update and render
+        controls.update();
+        renderer.render(scene, cameraRef.current);
+      }
     };
 
     animate();
