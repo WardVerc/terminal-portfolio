@@ -6,8 +6,32 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import Banner from "./components/Banner";
 
 const CAMERA_START_POSITION = new THREE.Vector3(0, 20, 30);
-const PROJECT1_START_POSITION = new THREE.Vector3(-5, 5, 0);
-const PROJECT2_START_POSITION = new THREE.Vector3(5, 5, 0);
+
+interface ProjectInterface {
+  id: string;
+  image: string;
+  startPosition: THREE.Vector3;
+  meshObject: THREE.Mesh<
+    THREE.BoxGeometry,
+    (THREE.MeshBasicMaterial | THREE.MeshLambertMaterial)[],
+    THREE.Object3DEventMap
+  > | null;
+}
+
+const projects: ProjectInterface[] = [
+  {
+    id: "project1",
+    image: "notsure.png",
+    startPosition: new THREE.Vector3(-5, 5, 0),
+    meshObject: null,
+  },
+  {
+    id: "project2",
+    image: "space.png",
+    startPosition: new THREE.Vector3(5, 5, 0),
+    meshObject: null,
+  },
+];
 
 function App() {
   const refContainer = useRef<HTMLDivElement>(null);
@@ -56,33 +80,22 @@ function App() {
     // Project card object
     const imageGeometry = new THREE.BoxGeometry(0.3, 3, 5);
 
-    // Card 1
-    const map = new THREE.TextureLoader().load("notsure.png");
-    const imageMaterial = new THREE.MeshBasicMaterial({ map: map });
-    const project1 = new THREE.Mesh(imageGeometry, [
-      imageMaterial,
-      imageMaterial,
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-    ]);
-    project1.position.copy(PROJECT1_START_POSITION);
-    scene.add(project1);
-
-    // Card 2
-    const map2 = new THREE.TextureLoader().load("space.png");
-    const imageMaterial2 = new THREE.MeshBasicMaterial({ map: map2 });
-    const project2 = new THREE.Mesh(imageGeometry, [
-      imageMaterial2,
-      imageMaterial2,
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-      new THREE.MeshLambertMaterial({ color: 0xffffff }),
-    ]);
-    project2.position.copy(PROJECT2_START_POSITION);
-    scene.add(project2);
+    // Initialize projects
+    projects.forEach((project) => {
+      const map = new THREE.TextureLoader().load(project.image);
+      const imageMaterial = new THREE.MeshBasicMaterial({ map: map });
+      const projectObject = new THREE.Mesh(imageGeometry, [
+        imageMaterial,
+        imageMaterial,
+        new THREE.MeshLambertMaterial({ color: 0xffffff }),
+        new THREE.MeshLambertMaterial({ color: 0xffffff }),
+        new THREE.MeshLambertMaterial({ color: 0xffffff }),
+        new THREE.MeshLambertMaterial({ color: 0xffffff }),
+      ]);
+      projectObject.position.copy(project.startPosition);
+      scene.add(projectObject);
+      project.meshObject = projectObject;
+    });
 
     // Stars
     function addStar() {
@@ -136,8 +149,10 @@ function App() {
     const resetCameraAndProjects = () => {
       // Use lerp to smoothly interpolate between current and initial positions
       camera.position.lerp(CAMERA_START_POSITION, 0.05);
-      project1.position.lerp(PROJECT1_START_POSITION, 0.05);
-      project2.position.lerp(PROJECT2_START_POSITION, 0.05);
+      projects.forEach((project) => {
+        project.meshObject &&
+          project.meshObject.position.lerp(project.startPosition, 0.05);
+      });
 
       setTimeout(() => {
         setCloseUpProject("");
@@ -159,26 +174,29 @@ function App() {
 
       // Project cards rotation
       const time = Date.now() * 0.001;
-      project1.rotation.y = time;
-      project1.rotation.z = 0.5 * (1 + Math.sin(time));
-
-      project2.rotation.y = time;
-      project2.rotation.z = 0.5 * (1 + Math.cos(time));
+      projects.forEach((project) => {
+        if (project.meshObject) {
+          // TODO: for each even number index, use 'sin' else 'cos'
+          // to add more random movements
+          project.meshObject.rotation.y = time;
+          project.meshObject.rotation.z = 0.5 * (1 + Math.sin(time));
+        }
+      });
 
       // Listen which card is in close up
-      switch (closeUpProjectRef.current) {
-        case "project1":
-          moveMeshTowardsCamera(project1, camera, 0.1, 5);
-          project2.position.lerp(PROJECT2_START_POSITION, 0.05);
-          break;
-        case "project2":
-          moveMeshTowardsCamera(project2, camera, 0.1, 5);
-          project1.position.lerp(PROJECT1_START_POSITION, 0.05);
-          break;
-        case "overview":
+      projects.forEach((project) => {
+        if (closeUpProjectRef.current == "overview") {
           resetCameraAndProjects();
-          break;
-      }
+        } else if (
+          closeUpProjectRef.current == project.id &&
+          project.meshObject
+        ) {
+          moveMeshTowardsCamera(project.meshObject, camera, 0.1, 5);
+        } else {
+          project.meshObject &&
+            project.meshObject.position.lerp(project.startPosition, 0.05);
+        }
+      });
 
       // Update and render
       controls.update();
