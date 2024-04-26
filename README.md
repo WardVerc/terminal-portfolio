@@ -4,7 +4,13 @@ A 3D portfolio website that looks like a terminal.
 
 ## Getting Started
 
-Install the packages first:
+Install node:
+
+```bash
+brew install node
+```
+
+Install the packages:
 
 ```bash
 npm i
@@ -22,7 +28,7 @@ Open [http://localhost:5173](http://localhost:5173) with your browser to see the
 
 This project is using the following tools:
 
-- [Vite](https://vitejs.dev/) as the compiler
+- [Vite](https://vitejs.dev/) as the development server
 - [Tailwind CSS](https://tailwindcss.com/) for styling
 - [Prettier](https://prettier.io/) to format the files
 - [ThreeJS](https://threejs.org/) for 3D stuff

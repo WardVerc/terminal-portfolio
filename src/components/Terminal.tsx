@@ -48,8 +48,16 @@ const Terminal: React.FC<TerminalProps> = ({
       terminalInputElement.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [commands]);
 
+  const focusOnTerminal = () => {
+    const terminalInputElement = document.getElementById("terminalInput");
+    terminalInputElement && terminalInputElement.focus();
+  };
+
   return (
-    <div className="absolute mt-36 ml-4 p-2 font-mono min-w-[550px] w-1/3 h-5/6 bg-[var(--main-bg-color)] overflow-hidden rounded-md">
+    <div
+      onClick={() => focusOnTerminal()}
+      className="absolute mt-36 ml-4 p-2 font-mono min-w-[550px] w-1/3 h-5/6 bg-[var(--main-bg-color)] overflow-hidden rounded-md"
+    >
       <p>Use the mouse to look around and zoom.</p>
       <p className="mb-8">Type 'help' for a list of available commands.</p>
       <div>
