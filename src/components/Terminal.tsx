@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import CommandRenderer from "./CommandRenderer.tsx";
+import { ProjectInterface } from "../App.tsx";
 
 interface TerminalProps {
   setCloseUpProject: (project: string) => void;
+  projects: ProjectInterface[];
 }
 
 const preCommand = (
@@ -18,6 +20,7 @@ const preCommand = (
 
 const Terminal: React.FC<TerminalProps> = ({
   setCloseUpProject,
+  projects,
 }: TerminalProps) => {
   const [inputValue, setInputValue] = useState("");
   const [commands, setCommands] = useState<string[]>([]);
@@ -25,19 +28,17 @@ const Terminal: React.FC<TerminalProps> = ({
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCommands([...commands, inputValue]);
-    switch (inputValue) {
-      case "overview":
-        setCloseUpProject("overview");
-        break;
-      case "clear":
-        setCloseUpProject("overview");
-        break;
-      case "project1":
-        setCloseUpProject("project1");
-        break;
-      case "project2":
-        setCloseUpProject("project2");
-        break;
+
+    if (inputValue == "overview" || inputValue == "clear") {
+      setCloseUpProject("overview");
+      return;
+    } else {
+      projects.forEach((project) => {
+        if (inputValue == project.id) {
+          setCloseUpProject(project.id);
+          return;
+        }
+      });
     }
     setInputValue("");
   };

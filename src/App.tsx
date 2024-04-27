@@ -7,7 +7,7 @@ import Banner from "./components/Banner";
 
 const CAMERA_START_POSITION = new THREE.Vector3(0, 20, 30);
 
-interface ProjectInterface {
+export interface ProjectInterface {
   id: string;
   image: string;
   startPosition: THREE.Vector3;
@@ -232,7 +232,7 @@ function App() {
   return (
     <div ref={refContainer}>
       <Banner />
-      <Terminal setCloseUpProject={setCloseUpProject} />
+      <Terminal setCloseUpProject={setCloseUpProject} projects={projects} />
     </div>
   );
 }
