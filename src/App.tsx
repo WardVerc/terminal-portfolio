@@ -5,11 +5,13 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import Banner from "./components/Banner";
 
-const CAMERA_START_POSITION = new THREE.Vector3(0, 20, 30);
+const CAMERA_START_POSITION = new THREE.Vector3(0, 10, 20);
 
 export interface ProjectInterface {
   id: string;
   image: string;
+  secondImage?: string;
+  description: string;
   startPosition: THREE.Vector3;
   meshObject: THREE.Mesh<
     THREE.BoxGeometry,
@@ -20,15 +22,47 @@ export interface ProjectInterface {
 
 const projects: ProjectInterface[] = [
   {
-    id: "project1",
-    image: "notsure.png",
-    startPosition: new THREE.Vector3(-5, 5, 0),
+    id: "about",
+    image: "me.png",
+    secondImage: "me2.jpg",
+    description:
+      "Hi! I'm Ward and I love to develop cool projects like this one. Check some of them out here! And if you want to see my code check out my github: https://github.com/WardVerc. I started developing as a hobby in 2018, got my degree in 2021 and started working as a fulltime developer in 2021. Started out as a frontend developer (+3 years of experience) and since 2024 I've been working as a Python developer. Next to coding, I like to wakeboard in the summer and leadclimb 🏄🏻‍♂️ 🧗🏻‍♂️. I also play chess once in a while and I like dogs 🐕",
+    startPosition: new THREE.Vector3(0, 0, -20),
     meshObject: null,
   },
   {
-    id: "project2",
-    image: "space.png",
-    startPosition: new THREE.Vector3(5, 5, 0),
+    id: "archief",
+    image: "archief.png",
+    secondImage: "archief2.png",
+    description:
+      "hetarchief.be is a webapp that offers educational material from over 100 Flemish organizations, tailored to educational standards and accessible to instructors via an account. Instructors can view fragments, compile them into collections, and create and share targeted assignments. A management section allows for the administration of all content, collections, and assignments. I primarily worked on frontend development using React and handled backend tasks in Node.js, including modifying APIs and managing database interactions.",
+    startPosition: new THREE.Vector3(-15, 0, 0),
+    meshObject: null,
+  },
+  {
+    id: "tvh",
+    image: "tvh.png",
+    description:
+      "TVH is a company with a webshop specializing in aerial work platforms and their components. This webshop, which I contributed to developing, offers a wide range of parts tailored for industries that use elevated work solutions. Users can easily browse, select, and purchase components through their personalized accounts. The platform, built using React and Redux, features a streamlined management system for efficient order processing and inventory tracking. The focus is on providing a user-friendly experience while ensuring the availability of high-quality, industry-compliant parts.",
+    startPosition: new THREE.Vector3(-5, 0, 0),
+    meshObject: null,
+  },
+  {
+    id: "spotify",
+    image: "spotify.png",
+    secondImage: "spotify2.png",
+    description:
+      "I made a Python-based project that allows users to create a Spotify playlist from the top 100 songs of any given date. By entering a specific date, the script searches the Billboard Top 100 to identify which songs were on the charts that day. Utilizing BeautifulSoup, I scrape the necessary data from the charts, then use the Spotipy library to search for these songs on Spotify, create a playlist, and add the songs to it.",
+    startPosition: new THREE.Vector3(5, 0, 0),
+    meshObject: null,
+  },
+  {
+    id: "scraper",
+    image: "scraper.png",
+    secondImage: "scraper2.png",
+    description:
+      "In this project, I developed a Python-based scraper using Selenium and BeautifulSoup to search for houses for sale that meet specific personal criteria. The scraper navigates through a housing website, identifying properties that match predefined requirements such as location, price, and size. Once the relevant properties are found, the data is meticulously extracted and then stored in a Google Sheets document for easy access and analysis",
+    startPosition: new THREE.Vector3(15, 0, 0),
     meshObject: null,
   },
 ];
@@ -73,8 +107,7 @@ function App() {
     // const lightHelper = new THREE.PointLightHelper(pointLight);
     // scene.add(lightHelper)
     const light = new THREE.AmbientLight(0xffffff, 20);
-    const gridHelper = new THREE.GridHelper(50, 10);
-    scene.add(light, gridHelper);
+    scene.add(light);
 
     // Orbitcontrols
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -86,14 +119,35 @@ function App() {
     projects.forEach((project) => {
       const map = new THREE.TextureLoader().load(project.image);
       const imageMaterial = new THREE.MeshBasicMaterial({ map: map });
-      const projectObject = new THREE.Mesh(imageGeometry, [
-        imageMaterial,
-        imageMaterial,
-        new THREE.MeshLambertMaterial({ color: 0xffffff }),
-        new THREE.MeshLambertMaterial({ color: 0xffffff }),
-        new THREE.MeshLambertMaterial({ color: 0xffffff }),
-        new THREE.MeshLambertMaterial({ color: 0xffffff }),
-      ]);
+
+      let projectObject: THREE.Mesh<
+        THREE.BoxGeometry,
+        (THREE.MeshBasicMaterial | THREE.MeshLambertMaterial)[],
+        THREE.Object3DEventMap
+      > | null = null;
+
+      if (project.secondImage) {
+        const map2 = new THREE.TextureLoader().load(project.secondImage);
+        const imageMaterial2 = new THREE.MeshBasicMaterial({ map: map2 });
+        projectObject = new THREE.Mesh(imageGeometry, [
+          imageMaterial,
+          imageMaterial2,
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+        ]);
+      } else {
+        projectObject = new THREE.Mesh(imageGeometry, [
+          imageMaterial,
+          imageMaterial,
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+          new THREE.MeshLambertMaterial({ color: 0xffffff }),
+        ]);
+      }
+
       projectObject.position.copy(project.startPosition);
       scene.add(projectObject);
       project.meshObject = projectObject;
@@ -182,7 +236,7 @@ function App() {
           // TODO: for each even number index, use 'sin' else 'cos'
           // to add more random movements
           project.meshObject.rotation.y = time;
-          project.meshObject.rotation.z = 0.5 * (1 + Math.sin(time));
+          project.meshObject.rotation.z = 0.5 * (1 + Math.cos(time));
         }
       });
 
@@ -200,7 +254,7 @@ function App() {
                 project.meshObject,
                 cameraRef.current,
                 0.1,
-                5,
+                3,
               );
             }
           } else {

@@ -35,7 +35,4 @@ This project is using the following tools:
 
 ## To do's:
 
-- Use actual screenshots of projects
-- Show description when showing project detail, let it fade in, fade out when showing overview again
-- Add an 'About' command en move the camera really far where there is a 3D object of me (?) and show some information
 - Add commands to make cool camera moves / animations, like zooming out and keep spinning, move camera to top and look down and move projects around, ...

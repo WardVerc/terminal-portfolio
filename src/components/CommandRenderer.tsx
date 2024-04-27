@@ -83,6 +83,12 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
     </>
   );
 
+  const showDescription = (description: string) => (
+    <div className="m-8">
+      <p>{description}</p>
+    </div>
+  );
+
   return (
     <>
       {commands.map((command: string) => {
@@ -119,6 +125,7 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
             <>
               {renderDefault(command)}
               {showProject(project.id)}
+              {showDescription(project.description)}
             </>
           );
         } else {
