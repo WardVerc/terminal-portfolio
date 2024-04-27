@@ -31,12 +31,10 @@ const Terminal: React.FC<TerminalProps> = ({
 
     if (inputValue == "overview" || inputValue == "clear") {
       setCloseUpProject("overview");
-      return;
     } else {
       projects.forEach((project) => {
         if (inputValue == project.id) {
           setCloseUpProject(project.id);
-          return;
         }
       });
     }
@@ -66,6 +64,7 @@ const Terminal: React.FC<TerminalProps> = ({
           preCommand={preCommand}
           commands={commands}
           clear={() => setCommands([])}
+          projects={projects}
         />
       </div>
       <form onSubmit={onSubmit} autoComplete="off">

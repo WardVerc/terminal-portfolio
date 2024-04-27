@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { asciiSurfer } from "../assets/ascii";
+import { ProjectInterface } from "../App";
 
 interface Command {
   name: string;
@@ -10,11 +11,10 @@ interface CommandRendererProps {
   commands: string[];
   preCommand: ReactNode;
   clear: () => void;
+  projects: ProjectInterface[];
 }
 
 const commandList: Command[] = [
-  { name: "project1", description: "View project1 in detail" },
-  { name: "project2", description: "View project2 in detail" },
   { name: "overview", description: "View all projects" },
   { name: "help", description: "Show a list of available commands" },
   { name: "clear", description: "Clear the terminal and your mind" },
@@ -25,7 +25,22 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
   commands,
   preCommand,
   clear,
+  projects,
 }) => {
+  // Add project id's as commands
+  projects.forEach((project) => {
+    const command = {
+      name: project.id,
+      description: `View ${project.id} in detail`,
+    };
+    // only if commandlist does not already contain the command
+    if (
+      !commandList.some((commandOfList) => commandOfList.name === command.name)
+    ) {
+      commandList.push(command);
+    }
+  });
+
   const renderDefault = (command: string) => (
     <p className="flex">
       {preCommand}
@@ -71,52 +86,48 @@ const CommandRenderer: React.FC<CommandRendererProps> = ({
   return (
     <>
       {commands.map((command: string) => {
-        switch (command.toLowerCase()) {
-          case "clear":
-            clear();
-            break;
-          case "help":
-            return (
-              <>
-                {renderDefault(command)}
-                {renderHelp()}
-              </>
-            );
-          case "surfer":
-            return (
-              <>
-                {renderDefault(command)}
-                {showSurfer()}
-              </>
-            );
-          case "overview":
-            return (
-              <>
-                {renderDefault(command)}
-                {showProject("overview")}
-              </>
-            );
-          case "project1":
-            return (
-              <>
-                {renderDefault(command)}
-                {showProject("project1")}
-              </>
-            );
-          case "project2":
-            return (
-              <>
-                {renderDefault(command)}
-                {showProject("project2")}
-              </>
-            );
-          default:
-            return (
-              <>
-                {renderDefault(command)}
-                {renderCommandNotFound()}
-              </>
-            );
+        const project = projects.find(
+          (project) => command.toLowerCase() == project.id,
+        );
+
+        if (command.toLowerCase() == "clear") {
+          clear();
+          return;
+        } else if (command.toLowerCase() == "help") {
+          return (
+            <>
+              {renderDefault(command)}
+              {renderHelp()}
+            </>
+          );
+        } else if (command.toLowerCase() == "surfer") {
+          return (
+            <>
+              {renderDefault(command)}
+              {showSurfer()}
+            </>
+          );
+        } else if (command.toLowerCase() == "overview") {
+          return (
+            <>
+              {renderDefault(command)}
+              {showProject("overview")}
+            </>
+          );
+        } else if (project) {
+          return (
+            <>
+              {renderDefault(command)}
+              {showProject(project.id)}
+            </>
+          );
+        } else {
+          return (
+            <>
+              {renderDefault(command)}
+              {renderCommandNotFound()}
+            </>
+          );
         }
       })}
     </>
